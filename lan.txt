@@ -1,0 +1,50 @@
+Узнать свой ip:
+
+    ip a
+    hostname -I
+
+Узнать маршруты:
+
+    ip route
+
+Путь запроса:
+    
+    traceroute <ip>
+
+    sudo apt install traceroute -y
+
+Инфо о ip:
+
+    whois <ip>
+
+    sudo apt install whois -y
+
+Диапазоны адресов:
+
+    Localhost:
+
+        127.0.0.1 — 127.255.255.255
+
+    Частные: 
+
+        10.0.0.0 — 10.255.255.255
+        100.64.0.0 — 100.127.255.255
+        172.16.0.0 — 172.31.255.255
+        192.168.0.0 — 192.168.255.255
+
+DMS -> ip:
+
+    host <dns-имя>
+
+    dig <dns-имя> @<ip dns-сервера>
+
+        dig yandex.ru @4.2.2.2
+        dig apple.com @8.8.8.8
+
+        dig +trace yandex.ru @4.2.2.2
+
+Top level domains:
+
+    com, ru ...
+
+/etc/hosts
