@@ -48,3 +48,7 @@ Top level domains:
     com, ru ...
 
 /etc/hosts
+
+netstat - 
+
+    netstat -lnp | grep docker
