@@ -27,7 +27,7 @@ function arc(){
     # Имя архива (абсолютный путь)
     destination=$2
 
-    # Если переданные функции параметры не пусты
+    # Если переданные параметры не пусты
     if [ ! -z $source -a ! -z $destination ]; then
         # Имя файла/каталога (из абсолютного)
         title=${source##*/}
@@ -47,12 +47,14 @@ function arc(){
     fi
 }
 
+
 function delete(){
     # Функция удаления файла/каталога
 
     # Целевой файл/каталог (абсолютный путь)
     source=$1
 
+    # Если переданный параметр не пуст
     if [ ! -z $source ]; then
         #   Если файл
         if [ -f "$source" ]; then
@@ -67,6 +69,31 @@ function delete(){
 }
 
 
+function get_unix_time(){
+    # Функция получает unix-время создания файла/каталога 
+
+    # Целевой файл/каталог (абсолютный путь)
+    source=$1
+
+    # Если переданный параметр не пуст
+    if [ ! -z $source ]; then
+        # Склейка из даты и времени
+        date_stamp=$(ls -l --time-style=long-iso $source | awk '{ print $6 }')
+        time_stamp=$(ls -l --time-style=long-iso $source | awk '{ print $7 }')
+        datetime_stamp=$date_stamp"T"$time_stamp":00"
+        # echo $datetime_stamp
+
+        result=$(date -d $datetime_stamp +"%s")
+        # echo $result
+
+        echo $(expr $result)
+    # В функцию не передан нужный параметр
+    else
+        # echo "В функцию 'get_unix_time' не передан нужный параметр. Пример: get_unix_time <ГГГГ-ММ-ДДТЧЧ:ММ:СС>"
+        echo 0
+    fi
+}
+
 # Задаём имя каталога корзины
 trash_dir=~/TRASH
 
@@ -78,6 +105,8 @@ script=$(basename "$0")
 
 # Полный(абсолютный) путь к цели
 target=$1
+
+
 
 # Если в скрипт не передали параметр, он же полный путь к архиву
 if [ -z "${target}" ]; then
@@ -91,12 +120,33 @@ else
 
     # delete $target
 
-    unix_ts_now=$(date +%s%3N)
-    echo "$unix_ts_now"
+    # Текущая дата и время в unix-формате 
+    unix_datetime_now=$(date +%s%3N)
+    # echo "$unix_datetime_now"
 
-    # for file in $(ls $trash_dir); do
-    #     # echo "$(ls -i $trash_dir/$file | awk '{ print $1 }')"
-    #     echo "$(ls -lit $trash_dir/$file )"
-    # done
+    # Отсечка, после которой должны удаляьться файлы-архивы
+    limit=172800  # 48 часов в секундах
+
+    for name in $(ls $trash_dir); do
+        # Абсолютный путь к файду
+        full_name=$trash_dir/$name
+
+        unix_ts_int=$(get_unix_time $full_name)
+        echo $unix_ts
+
+        # # Склейка из даты и времени
+        # date_stamp=$(ls -l --time-style=long-iso $full_name | awk '{ print $6 }')
+        # time_stamp=$(ls -l --time-style=long-iso $full_name | awk '{ print $7 }')
+        # datetime_stamp=$date_stamp"T"$time_stamp":00"
+        # # echo $datetime_stamp
+
+        # unix_datetime_stamp=$(date -d $datetime_stamp +"%s")
+        # # echo $unix_datetime_stamp
+
+    done
+
+    # get_unix_time "2024-10-15T06:41:00" 
+    # echo $?
+
 
 fi
