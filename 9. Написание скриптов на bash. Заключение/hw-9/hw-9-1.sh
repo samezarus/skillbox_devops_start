@@ -14,30 +14,6 @@
 
 ###################################################################################
 
-# Имя скрипта
-script=$(basename "$0")
-
-# Полный путь к архиву
-arc=$1
-
-# Расширение архтва
-ext=$( echo $arc | sed 's/^.*\.//' )
-
-# "Список" поддерживаемых скриптом архиваторов
-extensions="gz bz2 lzma zip"
-
-
-# Функция проверяет входит ли расширение переданного архива в список поддерживаемых
-function validate_ext() {  
-    for item in $extensions; do
-        if [ "$item" = "$ext" ]; then
-            echo "0"
-            return 0
-        fi
-    done
-
-    return 1
-}
 
 # Тест на присутствие утилиты в системе. Название утилиты передаётся параметром
 function check_app(){
@@ -53,55 +29,49 @@ function check_app(){
 }
 
 
+# Имя скрипта
+script=$(basename "$0")
+
+# Полный путь к архиву
+arc=$1
+
+# Расширение архтва
+ext=${arc##*.}
+
+# Имя архива (без расширения)
+name=${arc%%.*}
+
+
 # Если в скрипт не передали параметр, он же полный путь к архиву
 if [ -z "${arc}" ]; then
     echo "Скрипт ожидает имя архива в виде первого параметра (Пример: ./$script <имя архива>)"
 # Если переданный путь не существует
 elif [ ! -f "$arc" ]; then
     echo "Файл архив '$arc' не найден"
-# Если расширнение не входит в список поддерживаемых
-elif [ ! $(validate_ext) ]; then
-    echo "Расширение '$ext' не поддерживается"
 # Если не нашли утилиту unzip в системе
 elif [ ! $(check_app "unzip") ]; then
     echo "У вас не установленна утилита 'unzip'. Установка: sudo apt install unzip"
+# Если прошли плановые проверки
+else
+    case "$ext" in
+        # Обработка архива с расширением: gz
+        "gz") 
+            mkdir -p ./$name
+            tar -zxf $arc -C ./"$name" > /dev/null 2>&1
+            echo "Архив '$arc' распакован в директорию: './$name'";;
+        # Обработка архива с расширением: bz2
+        "bz2") 
+            tar -xf $arc -C ./ > /dev/null 2>&1
+            echo "Архив '$arc' распакован в директорию: './$name'";;
+        # Обработка архива с расширением: lzma
+        "lzma") 
+            tar --lzma -xf $arc -C ./ > /dev/null 2>&1
+            echo "Архив '$arc' распакован в директорию: './$name'";;
+        # Обработка архива с расширением: zip
+        "zip")
+            unzip -o $arc > /dev/null
+            echo "Архив '$arc' распакован в директорию: './$name'";;
+        *)
+            echo "Расширение '$ext' не поддерживается";;
+    esac
 fi
-
-
-# if [ ! $(check_zip "zip1") ]; then
-#     echo "false"
-# fi
-
-
-
-# if type "zip"; then
-#     return 0
-# else
-#     return 1
-# fi
-
-# echo $(validate_ext)
-
-
-# for x in "item 1" "item2" "item 3" "3" "*"; do
-#     echo -n "'$x' is "
-#     validate_ext "$x" && echo "valid" || echo "invalid"
-# done
-
-
-# res=$( echo $extensions | grep -q $arc_ext )
-# find_ext=$( echo $extensions | grep "$arc_ext" )
-
-# echo $find_ext
-
-# if [ $(echo $extensions | grep "arc_ext") ]; then
-#     echo found
-# else
-#     echo not found
-# fi
-
-# print_something () {
-#     echo Hello $1
-# }
-
-# print_something Mars
