@@ -18,6 +18,7 @@
 
 ##############################################################################
 
+
 function arc(){
     # Функция архивирования файла/каталога
 
@@ -27,7 +28,7 @@ function arc(){
     # Имя архива (абсолютный путь)
     destination=$2
 
-    # Если переданные параметры не пусты
+    # Если входные параметры не пусты
     if [ ! -z $source -a ! -z $destination ]; then
         # Имя файла/каталога (из абсолютного)
         title=${source##*/}
@@ -42,8 +43,9 @@ function arc(){
 
         # Сжатие
         tar -zcf "$full_name" "$source"
+        echo "Ваолнена архивация: '$source' -> '$full_name'"
     else
-        echo "В функцию 'arc' не переданы нужные параметры. Пример: arc <файл/каталог> <имя архива>"
+        echo "В функцию 'arc' не переданы входные параметры. Пример: arc <файл/каталог> <имя архива>"
     fi
 }
 
@@ -54,45 +56,57 @@ function delete(){
     # Целевой файл/каталог (абсолютный путь)
     source=$1
 
-    # Если переданный параметр не пуст
+    # Если входной параметр не пуст
     if [ ! -z $source ]; then
         #   Если файл
         if [ -f "$source" ]; then
             rm -f "$source"
+            echo "Удалён файл '$source'"
         #   Если каталог(удаляем рекурсивно)
         elif [ -d "$source" ]; then
             rm -r -f "$source"
+            echo "Удалён каталог '$source'"
         fi
+    # В функцию не передан входной параметр
     else
-        echo "В функцию 'delete' не передан нужный параметр. Пример: delete <файл/каталог>"
+        echo "В функцию 'delete' не передан входной параметр. Пример: delete <файл/каталог>"
     fi
 }
 
 
-function get_unix_time(){
-    # Функция получает unix-время создания файла/каталога 
+function chek_for_delete(){
+    # Функция проверяет дату создания файла с датой нижнего предела, 
+    # если предел привышен, то файл удаляется
 
-    # Целевой файл/каталог (абсолютный путь)
+    # Целевой файл (абсолютный путь)
     source=$1
 
-    # Если переданный параметр не пуст
-    if [ ! -z $source ]; then
-        # Склейка из даты и времени
+    # Дата предела, после которого следует удалить файл
+    limit=$2
+
+    # Если входные параметры не пусты
+    if [ ! -z $source -a ! -z $limit ]; then
+
+        # Склейка из даты и времени создания файла (в unix-время)
         date_stamp=$(ls -l --time-style=long-iso $source | awk '{ print $6 }')
         time_stamp=$(ls -l --time-style=long-iso $source | awk '{ print $7 }')
-        datetime_stamp=$date_stamp"T"$time_stamp":00"
-        # echo $datetime_stamp
+        datetime_stamp=$(date --date="$date_stamp $time_stamp" +"%s")
 
-        result=$(date -d $datetime_stamp +"%s")
-        # echo $result
+        # Получение предела, перед которым файл должен быть удалён (в формате unix-времени)
+        limit_date=$(date --date="$(date '+%Y-%m-%d %H:%M') $limit hour ago" +"%s")
 
-        echo $(expr $result)
-    # В функцию не передан нужный параметр
+        # Если дата создания файла меньше предел, то удаляем файл
+        if [ $limit_date -gt $datetime_stamp ]; then
+            delete $source
+            echo "    Дата создания превысила $limit часов"
+        fi
+
+    # В функцию не переданы входные параметры
     else
-        # echo "В функцию 'get_unix_time' не передан нужный параметр. Пример: get_unix_time <ГГГГ-ММ-ДДТЧЧ:ММ:СС>"
-        echo 0
+        echo "В функцию 'chek_for_delete' не переданы входные параметры. Пример: chek_for_delete <файл> <дата предела>"
     fi
 }
+
 
 # Задаём имя каталога корзины
 trash_dir=~/TRASH
@@ -106,6 +120,18 @@ script=$(basename "$0")
 # Полный(абсолютный) путь к цели
 target=$1
 
+# Предел удаления файлов в часах
+hour_limit=48
+
+
+# Удаляем файлы, если дата создания превышает 'hour_limit'
+for name in $(ls $trash_dir); do
+    # Абсолютный путь к файду
+    full_name="$trash_dir/$name"
+
+    # Проверяем, стоит ли удалить файл
+    chek_for_delete $full_name $hour_limit        
+done
 
 
 # Если в скрипт не передали параметр, он же полный путь к архиву
@@ -116,37 +142,9 @@ elif [ ! -e "$target" ]; then
     echo "Файл/каталог '$target' не найден"
 # Если прошли плановые проверки
 else
-    # arc $target $trash_dir
+    # Архивируем файл/каталог
+    arc $target $trash_dir
 
-    # delete $target
-
-    # Текущая дата и время в unix-формате 
-    unix_datetime_now=$(date +%s%3N)
-    # echo "$unix_datetime_now"
-
-    # Отсечка, после которой должны удаляьться файлы-архивы
-    limit=172800  # 48 часов в секундах
-
-    for name in $(ls $trash_dir); do
-        # Абсолютный путь к файду
-        full_name=$trash_dir/$name
-
-        unix_ts_int=$(get_unix_time $full_name)
-        echo $unix_ts
-
-        # # Склейка из даты и времени
-        # date_stamp=$(ls -l --time-style=long-iso $full_name | awk '{ print $6 }')
-        # time_stamp=$(ls -l --time-style=long-iso $full_name | awk '{ print $7 }')
-        # datetime_stamp=$date_stamp"T"$time_stamp":00"
-        # # echo $datetime_stamp
-
-        # unix_datetime_stamp=$(date -d $datetime_stamp +"%s")
-        # # echo $unix_datetime_stamp
-
-    done
-
-    # get_unix_time "2024-10-15T06:41:00" 
-    # echo $?
-
-
+    # Удаляем файл/каталог
+    delete $target
 fi
