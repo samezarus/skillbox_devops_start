@@ -15,16 +15,21 @@
 ###################################################################################
 
 
-# Тест на присутствие утилиты в системе. Название утилиты передаётся параметром
+clear
+
+
 function check_app(){
-    check_item=$1
-    type "$check_item" > /dev/null 2>&1
+    # Фугкция проверяет наличие утилиты в системе
+
+    # Название утилиты 
+    app=$1
+    
+    type "$app" > /dev/null 2>&1
     
     if [ $(echo $?) = 0 ]; then
-        echo "0"
-        return 0
+        echo "true"
     else
-        return 1
+        echo "false"
     fi 
 }
 
@@ -49,15 +54,14 @@ if [ -z "${arc}" ]; then
 elif [ ! -f "$arc" ]; then
     echo "Файл архив '$arc' не найден"
 # Если не нашли утилиту unzip в системе
-elif [ ! $(check_app "unzip") ]; then
+elif [ $(check_app "unzip") = "false" ]; then
     echo "У вас не установленна утилита 'unzip'. Установка: sudo apt install unzip"
 # Если прошли плановые проверки
 else
     case "$ext" in
         # Обработка архива с расширением: gz
-        "gz") 
-            mkdir -p ./$name
-            tar -zxf $arc -C ./"$name" > /dev/null 2>&1
+        "gz")
+            tar -zxf $arc --one-top-level
             echo "Архив '$arc' распакован в директорию: './$name'";;
         # Обработка архива с расширением: bz2
         "bz2") 
@@ -65,11 +69,11 @@ else
             echo "Архив '$arc' распакован в директорию: './$name'";;
         # Обработка архива с расширением: lzma
         "lzma") 
-            tar --lzma -xf $arc -C ./ > /dev/null 2>&1
+            tar --lzma -xf $arc -C ./ 
             echo "Архив '$arc' распакован в директорию: './$name'";;
         # Обработка архива с расширением: zip
         "zip")
-            unzip -o $arc > /dev/null
+            unzip -o -qq $arc
             echo "Архив '$arc' распакован в директорию: './$name'";;
         *)
             echo "Расширение '$ext' не поддерживается";;
