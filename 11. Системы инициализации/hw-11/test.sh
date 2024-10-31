@@ -21,8 +21,22 @@ function is_symlink(){
 
 
 function is_hardlink(){
-    link=$1
-    link_path=${link%%.*}
+  link=$1
+
+  #
+  if [ ! -e "$link" ]; then
+    echo "Файл ссылки '$link' не найден"
+    return 1
+  fi
+  
+  #
+  link_path=${link%%.*}
+
+  inf=$(ls -lai | grep $my_link)
+
+  if [ $? -ne 0 ]; then
+    
+  fi
 }
 
 
@@ -42,6 +56,6 @@ echo $?
 
 echo $res
 
-a="/home/sameza/Downloads/google-chrome-stable_current_amd64.deb"
+a="/home/sameza/Downloads/google-chrome-stable_current_amd64.tar.gz.x"
 
 echo ${a%%.*}

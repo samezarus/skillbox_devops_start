@@ -18,6 +18,33 @@
 clear
 
 
+function is_symlink(){
+    # Функция проверяет, является ли переданный объект симлинком
+    
+    test $(readlink $1)
+}
+
+
+function is_hardlink(){
+    # Функция проверяет, является ли переданный объект хардлинком
+
+    link=$1
+
+    #
+    if [ ! -e "$link" ]; then
+        echo "Файл ссылки '$link' не найден"
+        return 1
+    fi
+  
+    #
+    link_path=${link%%.*}
+
+    inf=$(ls -lai | grep $my_link)
+
+}
+
+
+
 function arc(){
     # Функция архивирования файла/каталога
 
@@ -106,12 +133,6 @@ function chek_for_delete(){
     fi
 }
 
-
-function is_symlink(){
-    # Функция проверяет, является ли переданный объект симлинком
-    
-    test $(readlink $1)
-}
 
 
 # Задаём имя каталога корзины
