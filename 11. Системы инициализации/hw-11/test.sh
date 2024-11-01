@@ -3,59 +3,78 @@
 
 clear
 
-my_link=chrome.deb
-
-# echo "$(readlink $my_link)"
-
-
-# if [ -L ${my_link} ]; then
-#     echo "$(readlink $my_link)"
-# else
-#     echo "alarm"
-# fi
+my_link=telega.tar.xz
+# my_link=chrome.deb
 
 
 function is_symlink(){
-    test $(readlink $1)
-}
-
-
-function is_hardlink(){
-  link=$1
-
-  #
-  if [ ! -e "$link" ]; then
-    echo "Файл ссылки '$link' не найден"
-    return 1
-  fi
-  
-  #
-  link_path=${link%%.*}
-
-  inf=$(ls -lai | grep $my_link)
-
-  if [ $? -ne 0 ]; then
+    # Функция определяет, является ли переданный объект симлинком
     
-  fi
+    link=$1
+
+    test $(readlink $link)
 }
 
 
-if is_symlink "${my_link}"; then
-  echo $my_link is a symlink
-else
-  echo $my_link is not a symlink
+
+function get_symlink_parent(){
+    # Фунция пытается найти источник/родителя симлинка
+    
+    link=$1
+
+    if is_symlink "$link"; then
+        echo $(readlink "$link" -ef "$target_path")
+    fi
+}
+
+
+
+if is_symlink $my_link; then
+    echo "true"
 fi
 
+get_symlink_parent $my_link
 
 
-# find ~ -inum 12093735 2>/dev/null
+function hard_links_count(){
+    # Функция определяет кол-во хардлинков у файла
+    # По мотивам - https://linux.die.net/man/1/stat
 
-res=$(ls -lai | grep $my_link)
+    link=$1
 
-echo $?
+    # Переданный объект не найден
+    if [ ! -e "$link" ]; then
+        echo 0
+    else
+        echo $(stat -c %h $link)
+    fi
+}
 
-echo $res
 
-a="/home/sameza/Downloads/google-chrome-stable_current_amd64.tar.gz.x"
+function list_hard_links(){
+    # Фуекция выводи список "родственных" файлов по inode-номеру
+    
+    link=$1
 
-echo ${a%%.*}
+    if [ $(hard_links_count "$link") -gt 0 ]; then
+        # Получаем inode-номер
+        inode_number=$(stat -c %i $link)
+
+        # Ищем "родственников" по inode-номеру везде, начиная с корня.
+        # Ошибки прав доступа шлём по известному адресу (2>/dev/null)
+        find / -inum $inode_number 2>/dev/null
+    fi
+}
+
+
+
+#
+# path=$(dirname "$link")
+
+
+
+# hard_links_count $my_link
+# hard_links_count "/home/sameza/Downloads/google-chrome-stable_current_amd64.deb"
+
+# list_hard_links $my_link
+# list_hard_links "/home/sameza/Downloads/google-chrome-stable_current_amd64.deb"
