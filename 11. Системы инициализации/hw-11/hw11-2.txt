@@ -1,0 +1,26 @@
+# Напишите systemd-юнит, который будет 
+# запускать очистку файлов в 
+# директории ~/TRASH (которые попадают туда 
+# после работы скрипта delete для безопасного 
+# удаления файлов, реализованного в прошлых модулях) 
+# раз в час, удаляя файлы старше дня.
+
+
+https://documentation.suse.com/smart/systems-management/html/systemd-working-with-timers/index.html
+
+
+Проверка созданного сервиса:
+
+    systemd-analyze verify /etc/systemd/system/hw11-2.*
+
+Проверка запуск таймера:
+
+    sudo systemctl start hw11-2.timer
+
+Активация автозапуска таймера:
+
+    sudo systemctl enable hw11-2.timer
+
+Проверка работы сервиса:
+
+    sudo systemctl start hw11-2.service

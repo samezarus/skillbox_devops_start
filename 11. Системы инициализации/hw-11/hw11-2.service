@@ -1,0 +1,8 @@
+[Unit]
+Description="Сервис для домашки 11-2"
+
+[Service]
+ExecStart=/usr/local/bin/hw11-2.sh
+
+[Install]
+WantedBy=multi-user.target

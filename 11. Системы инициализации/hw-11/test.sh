@@ -1,7 +1,9 @@
 # ln -s /home/sameza/Downloads/tsetup.5.4.0.tar.xz ./telega.tar.xz
 # ln /home/sameza/Downloads/google-chrome-stable_current_amd64.deb ./chrome.deb
 
+
 clear
+
 
 my_link=telega.tar.xz
 # my_link=chrome.deb

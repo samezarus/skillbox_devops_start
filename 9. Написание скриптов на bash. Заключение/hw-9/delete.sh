@@ -98,7 +98,7 @@ function chek_for_delete(){
         # Получение предела, перед которым файл должен быть удалён (в формате unix-времени)
         limit_date=$(date --date="$(date '+%Y-%m-%d %H:%M') $limit hour ago" +"%s")
 
-        # Если дата создания файла меньше предел, то удаляем файл
+        # Если дата создания файла старее предела, то удаляем файл
         if [ $limit_date -gt $datetime_stamp ]; then
             delete $source
             echo "    Дата создания превысила $limit часов"

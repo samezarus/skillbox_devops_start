@@ -31,7 +31,7 @@
 ##############################################################################
 
 
-clear
+# clear
 
 
 function is_symlink(){
@@ -161,7 +161,7 @@ function chek_for_delete(){
         # Получение предела, перед которым файл должен быть удалён (в формате unix-времени)
         limit_date=$(date --date="$(date '+%Y-%m-%d %H:%M') $limit hour ago" +"%s")
 
-        # Если дата создания файла меньше предел, то удаляем файл
+        # Если дата создания файла старее предела, то удаляем файл
         if [ $limit_date -gt $datetime_stamp ]; then
             delete $source
             echo "    Дата создания превысила $limit часов"
@@ -215,19 +215,14 @@ else
         delete $target
         echo "Удалена только ссылка !"
 
-    # Обработка хардлинка
-    elif [ $(hard_links_count "$target") -gt 0 ]; then
-        echo "Список ссылок:"
-        list_hard_links "$target"
-
-        # Архивируем файл
-        arc "$target" "$trash_dir"
-
-        # Удаляем файл
-        delete "$target"
-
     # Обработка просто файлов (из домашки № 9)
     else
+        # Обработка хардлинка
+        if [ $(hard_links_count "$target") -gt 0 ]; then
+            echo "Список ссылок:"
+            list_hard_links "$target"
+        fi
+
         # Архивируем файл/каталог
         arc "$target" "$trash_dir"
 

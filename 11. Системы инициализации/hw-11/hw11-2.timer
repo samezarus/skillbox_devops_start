@@ -1,0 +1,9 @@
+[Unit]
+Description="Таймер для домашки 11-2"
+
+[Timer]
+OnUnitActiveSec=1h
+Unit=hw11-2.service
+
+[Install]
+WantedBy=multi-user.target
