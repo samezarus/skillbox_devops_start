@@ -1,0 +1,46 @@
+Задание 1
+
+    ./hw12-1.png - скрин сделал один, ниже так же написал команды которые использовал
+
+    Архивирование, шифрование и расшифровывание:
+        # password.txt -> password.tar.gz
+        tar -zvcf ./password.tar.gz ./password.txt
+
+        # password.tar.gz -> password.enc
+        openssl enc -aes-256-cbc -in ./password.tar.gz -out ./password.enc
+
+        # password.enc -> password_dec.tar.gz
+        openssl enc -aes-256-cbc -d -in ./password.enc -out ./password_dec.tar.gz
+
+    Распаковка:
+        
+        # password_dec.tar.gz -> password.txt (перетираем исходный password.txt)
+        tar -zvxf ./password_dec.tar.gz
+
+Задание 2
+
+    Q: Изменится ли хеш текстового файла, если добавить в него пустую строку?
+
+    A: Очевидно что изменится =) Т.к. при добавлении пустой строки(переносе курсора
+    на новую строку) в файл под капотом добавятся скрытые символы переноса строки "\n" или "\n\r",
+    что в свою очередь повлечёт изменение хэш-суммы файла.
+
+    echo "Hello world !" > 1.txt
+    md5sum 1.txt
+    echo "" >> 1.txt
+    md5sum 1.txt
+
+
+Задание 3
+
+    # Создание приватного ключа
+    openssl genrsa -out private.key 4096
+
+    # Подпись приватного ключа
+    openssl req -new -key private.key -out server.csr
+
+    # Выпуск сертификата
+    openssl x509 -req -days 365 -in server.csr -signkey private.key -out server.crt
+
+Задание 4
+

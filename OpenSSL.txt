@@ -1,0 +1,58 @@
+Алгоритмы:
+
+    openssl enc -list
+
+
+Шифрование:
+
+    openssl enc -<алгоритм> -in <целевой файл> -out <результирующий файл>:
+
+    Пример:
+        alg=aes-256-cbc
+        target_file=algebraist.txt
+        enc_file=algebraist.enc
+
+        openssl enc -$alg -in $target_file -out $enc_file
+
+Дешифрование:
+
+    openssl enc -<алгоритм> -d -in <зашифрованный файл> -out <расшифрованный файл>
+
+    Пример:
+        alg=aes-256-cbc
+        enc_file=algebraist.enc
+        result_file=algebraist.decode.txt
+
+        openssl enc -$alg -d -in $enc_file -out $result_file
+
+self SSL:
+
+    Создание приватного ключа:
+        
+        # -> private.key
+        openssl genrsa -out private.key 4096
+
+    Подпись приватного ключа:
+
+        CSR (Certificate Signing Request) — это зашифрованный запрос на 
+        выпуск сертификата, содержащий подробную информацию о домене и 
+        организации. Генерация CSR является необходимой процедурой 
+        подготовки к получению SSL-сертификата. 
+        Сгенерированный CSR включается в анкету на получение сертификата.
+
+        # private.key -> server.csr
+        openssl req -new -key private.key -out server.csr
+        
+    Выпуск сертификата:
+
+        # server.csr + private.key -> server.crt
+        openssl x509 -req -days 365 -in server.csr -signkey private.key -out server.crt
+
+    Проверка сертификата:
+
+        openssl x509 -noout -text -in server.crt
+
+    Сравнение хэшей:
+
+        openssl x509 -noout -modulus -in server.crt | openssl md5
+        openssl rsa -noout -modulus -in private.key | openssl md5
