@@ -19,6 +19,8 @@
 
 Задание 2
 
+    ./hw12-2.png
+
     Q: Изменится ли хеш текстового файла, если добавить в него пустую строку?
 
     A: Очевидно что изменится =) Т.к. при добавлении пустой строки(переносе курсора
@@ -33,14 +35,26 @@
 
 Задание 3
 
-    # Создание приватного ключа
-    openssl genrsa -out private.key 4096
+    ./hw12-3_certs_create.png
 
-    # Подпись приватного ключа
-    openssl req -new -key private.key -out server.csr
+    ./hw12-3_nginx_conf.png
 
-    # Выпуск сертификата
-    openssl x509 -req -days 365 -in server.csr -signkey private.key -out server.crt
+    ./hw12-3_https_url.png
 
 Задание 4
 
+    Генерируем приватный ключ
+        
+        ./hw12-4_gen_key.png
+
+    Извлекаем из приватного ключа публичный ключ
+
+        ./hw12-4_extract.png
+
+    Шифруем файл
+
+        ./hw12-4_encode.png
+
+    Расшифровываем файл
+
+        ./hw12-4_decode.png

@@ -1,0 +1,53 @@
+Задание 1
+
+    ./hw14-1_mysql_start_install.png
+    ./hw14-1_mysql_status.png
+
+    sudo -i
+
+    apt update
+
+    apt install mysql-server -y
+
+    systemctl status mysql
+
+Задание 2
+
+    ./hw14-2_find_general_log.png
+    ./hw14-2_general_log_info.png
+
+    # Подключаемся через консольного клиента к БД
+    mysql -u root
+
+    # Принтим имена БД-шек
+    show databases;
+
+    # Переключается на БД "mysql"
+    use mysql;
+
+    # Принтим таблицы БД ("mysql"), и убеждаемся, что "general_log" присутствует
+    show tables;
+
+    # Получаем инфо о полях и их типах таблицы "general_log"
+    describe general_log;
+
+    Поле: event_time;   Тип: timestamp(6) 
+    Поле: user_host;    Тип: mediumtext 
+    Поле: thread_id;    Тип: bigint unsigned
+    Поле: server_id;    Тип: int unsigned
+    Поле: command_type; Тип: varchar(64)
+    Поле: argument;     Тип: mediumblob 
+
+Задание 3
+
+    ./hw14-3_mysql_edit_conf.png
+    ./hw14-3_cat_query_log.png
+    
+    # Открываем конф. файл, включаем параметры, сохраняем
+    mcedit /etc/mysql/mysql.conf.d/mysqld.cnf
+
+    # Перезапускаем сервис, что бы изменения вступили в силу
+    systemctl restart mysql
+
+    # Принтим появившейся лог
+    cat /var/log/mysql/query.log

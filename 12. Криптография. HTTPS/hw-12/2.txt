@@ -1,0 +1,12 @@
+1. Overview
+Nginx (pronounced as “Engine-X”) is an open source web server that is often used as reverse proxy or HTTP cache. It is available for Linux for free.
+
+In this tutorial we’ll install Nginx and set up a basic site.
+
+What you’ll learn
+How to set up Nginx
+Some basic Nginx configuration
+What you’ll need
+A computer running Ubuntu Server 16.04 LTS
+Some basic knowledge of command line use
+Originally authored by Marcin Mikołajczak 
