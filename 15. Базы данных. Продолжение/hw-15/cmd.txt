@@ -1,0 +1,102 @@
+Задание 1
+
+    # Создание, наполнение и архивирование/сжатие БД
+
+    ./hw15-1_create_db.png
+    ./hw15-1_lzma_backup.png
+
+    #   Подключение через консольного клиента к mysql
+    mysql -u root
+    
+    #   Создание БД "db1"
+    CREATE DATABASE db1;
+
+    #   Переключение контекста mysql на БД "db1"
+    use db1;
+
+    #   Создание таблицы "bro" в БД "db1"
+    create table bro(
+    ID INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    PRIMARY KEY (ID)
+    );
+
+    #   Наполнение таблицы "bro" тестовой записью
+    insert into bro(name) values ('Ivan');
+
+    #   Бэкапим со сжатием БД "db1" в архив .lzma
+    mysqldump -u root db1 | lzma > ./dump.sql.lzma
+
+
+    # Создание, накатывание из архива .lzma новой БД
+
+    ./hw15-1_create_restore_db.png
+    ./hw15-1_restore_db.png
+    ./hw15-1_restore_db_result.png
+
+    #   Подключение через консольного клиента к mysql
+    mysql -u root
+
+    #   Создание БД "db2"
+    CREATE DATABASE db2;
+
+    #   Переключение контекста mysql на БД "db2"
+    use db2;
+
+    #   Накатыввние "db2" из бэкапа "dump.sql.lzma"
+    unlzma < ./dump.sql.lzma | mysql -u root db2
+
+Задание 2
+
+    ./hw15-2_backups_all_dbs.png
+
+    mysqldump \
+    -u root \
+    --all-databases \
+    --events \
+    --ignore-table=mysql.event \
+    --extended-insert \
+    --add-drop-database \
+    --disable-keys \
+    --flush-privileges \
+    --quick \
+    --routines \
+    --triggers \
+    | gzip > ./all_databases.gz
+
+Задание 3
+
+    Прикладываю скрипы вместо скринов. Большая часть кода взята из ранее сданных домашек.
+
+    ./backup.sh
+    ./hw15-3.service
+    ./hw15-3.timer
+
+    В "/etc/systemd/system/" закидываем (из под sudo):
+
+        hw15-3.service
+        hw15-3.timer
+
+    В "/usr/local/bin/" закидываем (из под sudo):
+        
+        backup.sh
+
+Задание 4 
+
+    ./hw15-4_create_new_user.png
+
+    # Под sudo создаём пользователя(без пароля) и даём ему все права
+    CREATE USER 'sameza'@'localhost' IDENTIFIED BY '';
+    GRANT ALL ON *.* TO 'sameza'@'localhost';
+    flush privileges;
+
+    # Для работы скрипта из под вновь созданного пользователя, нужно назначть его переменной "user"
+    ...
+    user=sameza
+    ...
+
+
+    Q: Какие потенциальные проблемы с безопасностью может представлять итоговый вариант скрипта?
+
+    А: Итоговый вариант скрипта никак не повлияет на безопасность, т.к. в БД свои пользователи,
+    и БД ориентируется на их права/привилегии/разрешения

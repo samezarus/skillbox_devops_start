@@ -1,0 +1,8 @@
+[Unit]
+Description="Сервис для домашки 15-3 - бэкапы mysql"
+
+[Service]
+ExecStart=/usr/local/bin/backup.sh
+
+[Install]
+WantedBy=multi-user.target

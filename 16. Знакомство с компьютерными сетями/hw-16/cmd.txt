@@ -1,0 +1,42 @@
+Задание 1
+
+    число 10 (десятичное) в шестнадцатеричную систему счисления:
+        
+        ./hw16-1_dec_to_hex.png
+        
+        echo 10 |dc -e "16o?p"
+
+
+    число 55 (десятичное) в двоичную систему счисления:
+        
+        ./hw16-1_dec_to_bin.png
+
+        echo "obase=2;55" | bc
+
+Задание 2
+
+    ./hw16-2_chmod_darkroom.png
+
+    sudo -i
+
+    mkdir -p /home/darkroom
+
+    # Владельцу все права, группе и остальным чтение+выполнение
+    chmod 755 /home/darkroom
+
+    echo "test" > /home/darkroom/test.txt
+
+    # Выход из под рута
+    exit
+
+    # Проверяем работу darkroom из под какого-то пользователя
+    cat /home/darkroom/test.txt
+
+Задание 3
+
+    ./hw16-3_gtw_mac.png
+
+    arp -a
+
+
+
