@@ -52,3 +52,7 @@ Top level domains:
 netstat - 
 
     netstat -lnp | grep docker
+
+Сокет:
+
+    Связь ip и порта - 192.168.1.1:80
