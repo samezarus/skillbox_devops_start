@@ -1,19 +1,48 @@
 Задание 1
 
+    ./hw19-1_wordpress_compose.png
+    ./hw19-1_wordpress_nginx_conf.png
+    ./hw19-1_wordpress_admin_panel.png
 
+    Я ставил не по мануалу из видео, а через докер.
+    Слегка модифицировал docker-compose.yml с официальной страницы https://hub.docker.com/_/wordpress
+    Скрины docker-compose.yml и конфига nginx также прикладываю ( хотя их и не просили =) )
+    
 Задание 2
 
     Q:  Какой способ межпроцессного взаимодействия используется для связи WordPress и nginx? 
 
-    A:  
+    A:  Если простыми словами, то: 
+        Nginx на сервере(хост-машине) публикует порт который он слушает и данные которые придут в этот порт
+        он будет проксировать в WordPress (php + MySql). WordPress обработает данные и вернёт их пользователю
+        в броузер. 
 
 Задание 3
 
-    Q:  Какой ppid у nginx worker process?
-        Какой ppid у nginx master process?
+    ./hw19-3_nginx_ppids.png
 
-    A:
+    Q:  Какой ppid у nginx worker process ?
+
+
+    A:  docker exec -it nginx-letsencrypt-nginx-1 /bin/bash
+        ps -ef | grep 'nginx: worker process' | grep -v 'grep' | awk {'print $3'}
+
+
+    Q:  Какой ppid у nginx master process ?
+
+    A:  docker exec -it nginx-letsencrypt-nginx-1 /bin/bash
+        ps -ef | grep 'nginx: master process' | grep -v 'grep' | awk {'print $3'}
 
 Задание 4 
 
+    ./hw19-4_wordpress_tables.png
+
     Q:  Какие таблицы находятся в базе данных WordPress? 
+
+    A:  docker exec -it wordpress-wordpress-db-1 /bin/bash
+
+        mysql -u hw19 -p
+
+        use skillbox-hw19;
+
+        show tables;
