@@ -1,0 +1,69 @@
+Задание 1
+
+        Генерим публичный и приватный ключ и пушим публичный на сервер
+
+            ./hw18-1_gen_keys_send_pub.png
+            
+            # Создаём каталог куда положим публичный и приватный ключ
+            mkdir -p '/home/sameza/.ssh/soluyanovdev.ru'
+            
+            # Переходим в этот каталог
+            cd '/home/sameza/.ssh/soluyanovdev.ru'
+
+            # Генерим связку ключей (приватный + публичный)
+            ssh-keygen -b 4096 -a 10 -f '/home/sameza/.ssh/soluyanovdev.ru/id_rsa'
+
+            # Отправляем публичный ключ на сервер
+            ssh-copy-id -i '/home/sameza/.ssh/soluyanovdev.ru/id_rsa' sameza@soluyanovdev.ru
+
+        Подключение:
+
+            ./hw18-1_key_on_server.png
+            ./hw18-1_server_dir.png
+
+            ssh -i '/home/sameza/.ssh/soluyanovdev.ru/id_rsa' sameza@soluyanovdev.ru
+
+    
+        Q:  Как будет выглядеть сгенерённый fingerprint вашей виртуальной машины?
+
+        A:  SHA256:2apOipGw4naDrTKvdYuY0yPw3hylZqSbB3aAfom0LmQ
+            (Также он подчёркнут красным в ./hw18-1_gen_keys_send_pub.png)
+
+Задание 2
+
+    ./hw18-2_change_ssh_port.png
+    ./hw18-2_connect_ssh_2222.png
+
+Задание 3
+
+    3.1 
+
+        ./hw18-3_wireshark_google_com.png
+
+        filter = dns.qry.name == "google.com"
+
+    3.2
+
+        ./hw18-3_wireshark_only_dns.png
+
+        filter = dns
+
+    3.3
+
+        Q:  На каком уровне в стеке протоколов TCP/IP располагается DNS?
+
+        A:  На прикладном (Application Layer)
+
+
+        Q:  Какой протокол транспортного уровня используется для DNS? Как вы думаете, почему?
+        
+        A:  Почти всегда TCP и в исключительных случаях UDP.
+            Это следует из RFC5966.
+
+            Цитата: "... Most DNS [RFC1034] transactions take place over UDP [RFC0768].  TCP
+            [RFC0793] is always used for zone transfers and is often used for
+            messages whose sizes exceed the DNS protocol's original 512-byte
+            limit. ..."
+
+            А если это написано в RFC, то верим однозначно умным дядькам =)
+
