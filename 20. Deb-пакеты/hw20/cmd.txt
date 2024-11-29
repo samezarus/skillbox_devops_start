@@ -1,0 +1,55 @@
+Задание 1
+
+    ./hw20-1_create_pack_template.png
+    ./hw20-1_create_install_file.png
+    ./hw20-1_build.png
+    ./hw20-1_pack_install.png
+    ./hw20-1_pack_del.png
+
+    Ставим утилиты:
+        
+        apt update && apt install -y dpkg-dev devscripts equivs wget dh-make
+
+    Создаём каталог с именем пакета и пеерходим в него:
+
+        mkdir -p ~/temp/debpack-0.1 && cd ~/temp/debpack-0.1
+   
+    Копируем конф. файл nginx
+
+        cp ~/temp/app.conf ./
+
+    Создаём скелет будущего пакета
+
+        dh_make --indep --createorig
+
+    Переходим в каталог debian
+        
+        cd debian
+
+    Создаём файл для копирования нашего конф. файла в нужное место и 
+    прописываем куда стоит скопировать конф. файл
+
+        > install
+
+        echo "app.conf /home/sameza/PROJECTS/docker/nginx-letsencrypt/data/nginx" > install
+
+    Билдим пакет
+
+        debuild -us -uc      
+
+    Инсталим пакет
+
+        cd ~/temp && sudo dpkg -i debpack_0.1-1_all.deb
+
+    Ремувим пакет
+
+        sudo dpkg -r debpack
+
+
+Задание 2
+
+
+
+Задание 3 
+
+
