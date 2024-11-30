@@ -1,16 +1,15 @@
 Задание 1
 
     ./hw20-1_create_pack_template.png
-    ./hw20-1_create_install_file.png
     ./hw20-1_build.png
     ./hw20-1_pack_install.png
     ./hw20-1_pack_del.png
 
     Ставим утилиты:
         
-        apt update && apt install -y dpkg-dev devscripts equivs wget dh-make
+        apt update && apt install -y dpkg-dev devscripts equivs wget dh-make libncurses5-dev libtinfo-dev
 
-    Создаём каталог с именем пакета и пеерходим в него:
+    Создаём каталог с именем пакета и переходим в него:
 
         mkdir -p ~/temp/debpack-0.1 && cd ~/temp/debpack-0.1
    
@@ -29,9 +28,7 @@
     Создаём файл для копирования нашего конф. файла в нужное место и 
     прописываем куда стоит скопировать конф. файл
 
-        > install
-
-        echo "app.conf /home/sameza/PROJECTS/docker/nginx-letsencrypt/data/nginx" > install
+        echo "app.conf /etc/nginx/sites-enabled" > install
 
     Билдим пакет
 
@@ -39,17 +36,92 @@
 
     Инсталим пакет
 
-        cd ~/temp && sudo dpkg -i debpack_0.1-1_all.deb
+        sudo dpkg -i ~/temp/debpack_0.1-1_all.deb
 
     Ремувим пакет
 
-        sudo dpkg -r debpack
+        # sudo dpkg -r debpack (файл не удалился)
+        sudo dpkg --purge debpack (файл удалился)
 
 
 Задание 2
 
+    ./hw20-2_postinst_postrm.png
+    ./hw20-2_install_uninstall_logs.png
+
+    Q:  Подумайте, какие действия было бы полезно осуществлять после установки и 
+        удаления пакета, собранного в задании 1, и добавьте их в соответствующий 
+        case нужного мейнтейнерского скрипта.
+
+    A:  Первое, что пришло в голову это запись лога. Дата установки/дата удаления...
+
+        cd ~/temp/debpack-0.1/debian
+
+        > postinst
+
+            #!/bin/sh
+            mkdir -p /var/log/debpack
+            echo "Install: $(date)" >> /var/log/debpack/actions.log
+
+        > postrm
+
+            #!/bin/sh
+            mkdir -p /var/log/debpack
+            echo "UnInstall: $(date)" >> /var/log/debpack/actions.log
+
+        Ребилд пакета
+
+            debuild -us -uc
+
+        Смотрим записи в логе
+
+            cat /var/log/debpack/actions.log
+    
+    -----------------------------------------------------------------------------------
+
+    Q:  Ответьте на вопрос: как отличить, какой конфигурационный файл 
+        в /etc/nginx/sites-available устанавливается из пакета, а какой создан вручную?
+
+    A:  Не хочу быть кэпом, но отличить можно по имени и содержимому ...
 
 
 Задание 3 
 
+    ./hw20-3_clone_vim.png
+    ./hw20-3_configure_vim.png
+    ./hw20-3_make_vim.png
+    ./hw20-3_make_result_vim.png
+    ./hw20-3_run_vim.png
 
+    Ставим зависимости
+
+        apt update && apt install -y dpkg-dev devscripts equivs wget dh-make libncurses5-dev libtinfo-dev
+
+    Создадим каталог для сборки и перейдём в него
+
+        mkdir ~/temp2 && cd ~/temp2
+
+    Копируем репозиторий vim
+
+        git clone https://github.com/vim/vim.git
+
+    Перейдём в каталог с сорсами
+
+        cd ~/temp2/vim/src
+
+    Выполним предсборочную проверку
+
+        ./configure
+
+    Собираем vim
+
+        make
+
+    Запустим собранный vim
+
+        ./vim
+
+    По заданию нужно было скопировать файл в пользовательскую папку
+
+        mkdir -p ~/vim-sb
+        cp ./vim ~/vim-sb
