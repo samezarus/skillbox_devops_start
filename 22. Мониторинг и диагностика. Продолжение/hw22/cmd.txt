@@ -1,0 +1,73 @@
+Задание 1
+
+    ./hw22-1_disk_graph.png
+    ./hw22-1-ram_graph.png
+    ./hw22-1-cpu_graph.png
+
+    свободное место на диске
+
+        node_filesystem_avail_bytes{mountpoint="/",fstype!="rootfs"} / 1073741824 (GB)
+
+    свободную память (не забывайте о памяти, которая занята пейджкешем)
+
+        node_memory_MemAvailable_bytes - node_memory_Buffers_bytes - node_memory_Cached_bytes
+
+    loadaverage за минуту
+
+        node_load1
+
+Задание 2
+
+    ./hw22-2-mysql_all_graph.png
+    ./hw22-2-mysql_select_graph.png
+
+    mysql-exporter
+
+         Общее кол-во запросов по типу (SELECT, DROP ...) к БД, которое получаем через экспортер "mysql-exporter" подключенный к целевой БД
+
+            mysql_global_status_commands_total
+
+    Promql-выражения:
+    
+        Общее кол-во запросов "SELECT" к БД, которое получаем через экспортер "mysql-exporter" подключенный к целевой БД
+        
+            mysql_global_status_commands_total{command="select", instance="mysql-exporter:9104", job="mysql-exporter"}
+
+Задание 3
+
+    Урл с алертами
+
+        http://sameza.ru:9090/alerts (убедиться что броузер не редиректит на https !!!)
+
+        или
+
+        https://github.com/samezarus/open_mans/blob/main/DOCKER/templates/prometheus/alert.rules
+
+    Нагрузка CPU
+    
+        ./hw22-3-cpu_bash_load.png
+        ./hw22-3-cpu_btop_load.png
+        ./hw22-3-cpu_graph.png
+        ./hw22-3-cpu_alert.png
+
+    Свободное место на диске (уменьшал предел для отработки алерта)
+
+        ./hw22-3_disk_upload.png
+        ./hw22-3_disk_graph.png
+        ./hw22-3_disk_alert.png
+
+    Свободная RAM память (уменьшал предел для отработки алерта)
+
+        ./hw22-3-ram_graph.png
+        ./hw22-3-ram_alert.png
+        
+ps:
+
+    Делал всё в контейнерах. Веду для себя мануалн на гитхабе. Всё что делал лежит здесь
+
+        https://github.com/samezarus/open_mans/tree/main/DOCKER/templates/prometheus
+
+    Урл моего prometheus
+    
+        http://sameza.ru:9090 (убедиться что броузер не редиректит на https !!!)
+
